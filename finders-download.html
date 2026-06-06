@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Finders — Find Your Next Opportunity</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold: #C9912A;
+      --gold-light: #E8B84B;
+      --gold-dim: rgba(201,145,42,0.15);
+      --black: #080808;
+      --dark: #111111;
+      --dark2: #1A1A1A;
+      --text: #F0EDE8;
+      --muted: #888880;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    /* GRAIN OVERLAY */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.4;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 20px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(to bottom, rgba(8,8,8,0.95), transparent);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.05em;
+      text-decoration: none;
+    }
+
+    .nav-logo svg { width: 28px; height: 28px; }
+
+    .nav-cta {
+      background: var(--gold);
+      color: var(--black);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      font-size: 0.85rem;
+      padding: 10px 22px;
+      border-radius: 100px;
+      text-decoration: none;
+      letter-spacing: 0.03em;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .nav-cta:hover { background: var(--gold-light); transform: scale(1.03); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 120px 24px 80px;
+      position: relative;
+    }
+
+    .hero-glow {
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(ellipse, rgba(201,145,42,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--gold-dim);
+      border: 1px solid rgba(201,145,42,0.3);
+      color: var(--gold-light);
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 8px 18px;
+      border-radius: 100px;
+      margin-bottom: 32px;
+      animation: fadeUp 0.8s ease both;
+    }
+
+    .hero-badge span { width: 6px; height: 6px; background: var(--gold); border-radius: 50%; animation: pulse 2s infinite; }
+
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 10vw, 7rem);
+      font-weight: 700;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+      animation: fadeUp 0.8s 0.1s ease both;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      color: var(--muted);
+      max-width: 480px;
+      line-height: 1.6;
+      margin: 20px auto 48px;
+      animation: fadeUp 0.8s 0.2s ease both;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      animation: fadeUp 0.8s 0.3s ease both;
+    }
+
+    .hero, .hero h1, .hero-sub, .hero-badge, .hero-note {
+      text-align: center;
+      width: 100%;
+    }
+
+    .btn-primary, .btn-secondary {
+      text-align: center;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--gold);
+      color: var(--black);
+      font-weight: 500;
+      font-size: 1rem;
+      padding: 16px 32px;
+      border-radius: 100px;
+      text-decoration: none;
+      transition: all 0.25s;
+      box-shadow: 0 0 40px rgba(201,145,42,0.3);
+    }
+    .btn-primary:hover {
+      background: var(--gold-light);
+      transform: translateY(-2px);
+      box-shadow: 0 0 60px rgba(201,145,42,0.45);
+    }
+    .btn-primary svg { width: 20px; height: 20px; }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: transparent;
+      color: var(--text);
+      font-weight: 400;
+      font-size: 1rem;
+      padding: 16px 32px;
+      border-radius: 100px;
+      border: 1px solid rgba(240,237,232,0.2);
+      text-decoration: none;
+      transition: all 0.25s;
+    }
+    .btn-secondary:hover {
+      border-color: rgba(240,237,232,0.5);
+      background: rgba(240,237,232,0.05);
+    }
+
+    .hero-note {
+      margin-top: 20px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      animation: fadeUp 0.8s 0.4s ease both;
+    }
+
+    /* PHONE MOCKUP */
+    .phone-section {
+      padding: 40px 24px 100px;
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      position: relative;
+    }
+
+    .phone-wrap {
+      position: relative;
+      animation: floatPhone 4s ease-in-out infinite;
+    }
+    .phone-wrap:nth-child(2) { animation-delay: -2s; transform: translateY(20px); }
+    .phone-wrap:nth-child(3) { animation-delay: -1s; }
+
+    .phone-frame {
+      width: 180px;
+      background: var(--dark2);
+      border-radius: 32px;
+      border: 1px solid rgba(255,255,255,0.08);
+      overflow: hidden;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04);
+    }
+
+    .phone-frame img {
+      width: 100%;
+      display: block;
+    }
+
+    /* FEATURES */
+    .features {
+      padding: 80px 24px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      text-align: center;
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      text-align: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 600;
+      line-height: 1.1;
+      margin-bottom: 60px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .feature-card {
+      background: var(--dark);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 20px;
+      padding: 32px 28px;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .feature-card:hover {
+      border-color: rgba(201,145,42,0.3);
+      transform: translateY(-4px);
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--gold-dim);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      font-size: 1.4rem;
+    }
+
+    .feature-card h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .feature-card p {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ROLES */
+    .roles {
+      padding: 80px 24px;
+      background: var(--dark);
+      border-top: 1px solid rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .roles-inner {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .roles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 48px;
+    }
+
+    .role-pill {
+      background: var(--dark2);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 20px 24px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .role-pill:hover {
+      border-color: var(--gold);
+      background: var(--gold-dim);
+    }
+
+    .role-pill .emoji { font-size: 1.8rem; margin-bottom: 10px; }
+    .role-pill h4 { font-size: 0.95rem; font-weight: 500; margin-bottom: 4px; }
+    .role-pill p { font-size: 0.78rem; color: var(--muted); }
+
+    /* DOWNLOAD CTA */
+    .download-cta {
+      padding: 100px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .download-cta::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 700px;
+      height: 400px;
+      background: radial-gradient(ellipse, rgba(201,145,42,0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .download-cta h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.5rem, 7vw, 5rem);
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 20px;
+    }
+
+    .download-cta p {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 400px;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+    }
+
+    .warning-box {
+      display: inline-flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: rgba(201,145,42,0.08);
+      border: 1px solid rgba(201,145,42,0.25);
+      border-radius: 14px;
+      padding: 16px 20px;
+      max-width: 480px;
+      margin: 32px auto 0;
+      text-align: left;
+      font-size: 0.82rem;
+      color: #C9B48A;
+      line-height: 1.5;
+    }
+    .warning-box svg { flex-shrink: 0; margin-top: 2px; }
+
+    /* FOOTER */
+    footer {
+      padding: 40px 24px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      text-align: center;
+    }
+
+    footer .footer-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+
+    footer p {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* DIVIDER */
+    .divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(201,145,42,0.3), transparent);
+      margin: 0 auto;
+      max-width: 600px;
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes floatPhone {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* TICKER */
+    .ticker-wrap {
+      overflow: hidden;
+      padding: 20px 0;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      background: var(--dark);
+    }
+    .ticker {
+      display: flex;
+      gap: 60px;
+      animation: ticker 20s linear infinite;
+      white-space: nowrap;
+    }
+    .ticker span {
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+    .ticker span b { color: var(--gold); font-weight: 400; }
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    @media (max-width: 600px) {
+      nav { padding: 16px 20px; }
+      .phone-frame { width: 140px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <svg viewBox="0 0 32 32" fill="none">
+      <circle cx="14" cy="14" r="9" stroke="#C9912A" stroke-width="2.5"/>
+      <line x1="21" y1="21" x2="28" y2="28" stroke="#C9912A" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="14" cy="14" r="5" fill="rgba(201,145,42,0.2)"/>
+    </svg>
+    Finders
+  </a>
+  <a href="https://drive.google.com/file/d/1z-bFdAAYK7T7D8qIr3grvrZS7mQaykdf/view?usp=drivesdk" class="nav-cta">Download APK</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-badge">
+    <span></span>
+    Beta · Now Available
+  </div>
+  <h1>Find Your Next<br><em>Opportunity.</em><br>Get Found.</h1>
+  <p class="hero-sub">Finders connects job seekers, recruiters, and hustlers in one powerful platform. Post, discover, and get hired.</p>
+  <div class="hero-actions">
+    <a href="https://drive.google.com/file/d/1z-bFdAAYK7T7D8qIr3grvrZS7mQaykdf/view?usp=drivesdk" class="btn-primary">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M12 15V3M12 15l-4-4M12 15l4-4"/>
+        <path d="M2 17l.621 2.485A2 2 0 004.561 21h14.878a2 2 0 001.94-1.515L22 17"/>
+      </svg>
+      Download for Android
+    </a>
+    <a href="#features" class="btn-secondary">Learn More</a>
+  </div>
+  <p class="hero-note">Free to download · Android · Beta release</p>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span>Jobs <b>✦</b></span>
+    <span>Short Work <b>✦</b></span>
+    <span>Networking <b>✦</b></span>
+    <span>Recruiting <b>✦</b></span>
+    <span>Career Advice <b>✦</b></span>
+    <span>Messaging <b>✦</b></span>
+    <span>Discover People <b>✦</b></span>
+    <span>Post Opportunities <b>✦</b></span>
+    <span>Jobs <b>✦</b></span>
+    <span>Short Work <b>✦</b></span>
+    <span>Networking <b>✦</b></span>
+    <span>Recruiting <b>✦</b></span>
+    <span>Career Advice <b>✦</b></span>
+    <span>Messaging <b>✦</b></span>
+    <span>Discover People <b>✦</b></span>
+    <span>Post Opportunities <b>✦</b></span>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <p class="section-label">What's Inside</p>
+  <h2 class="section-title">Everything you need<br>to level up your career</h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">💼</div>
+      <h3>Jobs Board</h3>
+      <p>Browse full-time, part-time, and remote opportunities posted by real recruiters. Filter by location and type.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <h3>Short Work</h3>
+      <p>Find quick freelance gigs and short-term projects. Perfect for hustlers who want to earn on the side.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔍</div>
+      <h3>Discover People</h3>
+      <p>Search for professionals by role, skill, or name. Connect with job seekers, recruiters, and more.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📢</div>
+      <h3>Posts & Feed</h3>
+      <p>Share updates, job opportunities, career advice, and more. Build your professional presence.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">💬</div>
+      <h3>Direct Messages</h3>
+      <p>Chat directly with recruiters and candidates. No middleman — just real conversations.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔔</div>
+      <h3>Smart Alerts</h3>
+      <p>Get notified about likes, replies, hiring activity, and new opportunities relevant to you.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎥</div>
+      <h3>Video Calls</h3>
+      <p>Interview or connect face-to-face directly inside the app. No third-party tools needed.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST -->
+<section style="padding: 80px 24px; max-width: 800px; margin: 0 auto; text-align: center;">
+  <p class="section-label">Why Trust Finders</p>
+  <h2 class="section-title">Built with care,<br>made for real people</h2>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-top: 48px;">
+    <div style="background: var(--dark); border: 1px solid rgba(255,255,255,0.06); border-radius: 20px; padding: 28px 24px;">
+      <div style="font-size: 2rem; margin-bottom: 12px;">🔒</div>
+      <h4 style="font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; margin-bottom: 8px;">Secure & Private</h4>
+      <p style="font-size: 0.85rem; color: var(--muted); line-height: 1.6;">Your data is stored securely. We never sell your information to third parties.</p>
+    </div>
+    <div style="background: var(--dark); border: 1px solid rgba(255,255,255,0.06); border-radius: 20px; padding: 28px 24px;">
+      <div style="font-size: 2rem; margin-bottom: 12px;">🎥</div>
+      <h4 style="font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; margin-bottom: 8px;">In-App Video Calls</h4>
+      <p style="font-size: 0.85rem; color: var(--muted); line-height: 1.6;">Interview candidates or meet employers face-to-face without leaving the app.</p>
+    </div>
+    <div style="background: var(--dark); border: 1px solid rgba(255,255,255,0.06); border-radius: 20px; padding: 28px 24px;">
+      <div style="font-size: 2rem; margin-bottom: 12px;">🚀</div>
+      <h4 style="font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; margin-bottom: 8px;">Always Improving</h4>
+      <p style="font-size: 0.85rem; color: var(--muted); line-height: 1.6;">Finders is actively developed. New features and improvements ship regularly.</p>
+    </div>
+    <div style="background: var(--dark); border: 1px solid rgba(255,255,255,0.06); border-radius: 20px; padding: 28px 24px;">
+      <div style="font-size: 2rem; margin-bottom: 12px;">🌍</div>
+      <h4 style="font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; margin-bottom: 8px;">Built for the World</h4>
+      <p style="font-size: 0.85rem; color: var(--muted); line-height: 1.6;">Finders is a global platform — connecting professionals, recruiters, and hustlers across every country.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ROLES -->
+<section class="roles">
+  <div class="roles-inner">
+    <p class="section-label">Who It's For</p>
+    <h2 class="section-title">Built for every<br>professional</h2>
+    <div class="roles-grid">
+      <div class="role-pill">
+        <div class="emoji">🎯</div>
+        <h4>Job Seekers</h4>
+        <p>Find your next role fast</p>
+      </div>
+      <div class="role-pill">
+        <div class="emoji">📋</div>
+        <h4>Recruiters</h4>
+        <p>Post jobs & find talent</p>
+      </div>
+      <div class="role-pill">
+        <div class="emoji">⚡</div>
+        <h4>Hustlers</h4>
+        <p>Pick up gigs & short work</p>
+      </div>
+      <div class="role-pill">
+        <div class="emoji">💡</div>
+        <h4>Professionals</h4>
+        <p>Network & share advice</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DOWNLOAD CTA -->
+<section class="download-cta" id="download">
+  <p class="section-label">Get the App</p>
+  <h2>Ready to get<br><em style="color:var(--gold)">found?</em></h2>
+  <p>Download the Finders APK for Android and start your journey today. Free during beta.</p>
+  <a href="https://drive.google.com/file/d/1z-bFdAAYK7T7D8qIr3grvrZS7mQaykdf/view?usp=drivesdk" class="btn-primary" style="font-size:1.1rem; padding: 18px 40px;">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <path d="M12 15V3M12 15l-4-4M12 15l4-4"/>
+      <path d="M2 17l.621 2.485A2 2 0 004.561 21h14.878a2 2 0 001.94-1.515L22 17"/>
+    </svg>
+    Download APK · Android
+  </a>
+
+  <div class="warning-box">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9912A" stroke-width="2" stroke-linecap="round">
+      <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+      <line x1="12" y1="9" x2="12" y2="13"/>
+      <line x1="12" y1="17" x2="12.01" y2="17"/>
+    </svg>
+    <span><b style="color:var(--gold-light)">Installing APK:</b> Android may warn "Unknown source." Tap <b style="color:var(--gold-light)">Install anyway</b> — this is normal for apps outside the Play Store. Finders will be available on Google Play next month.</span>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Finders</div>
+  <p>Find your next opportunity. Get found.</p>
+  <p style="margin-top:8px">© 2026 Finders · Beta</p>
+</footer>
+
+</body>
+</html>
